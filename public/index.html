@@ -3,219 +3,368 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>N8N Competition</title>
+  <title>N8N Arena</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0a0a0f;
-      --surface: #12121a;
-      --surface-2: #1a1a26;
-      --border: #2a2a3a;
-      --text: #e4e4ef;
-      --text-dim: #8888a0;
-      --accent: #6c5ce7;
-      --accent-glow: rgba(108, 92, 231, 0.3);
-      --green: #00e676;
-      --green-glow: rgba(0, 230, 118, 0.25);
-      --orange: #ff9100;
-      --orange-glow: rgba(255, 145, 0, 0.2);
-      --red: #ff5252;
+      --bg: #ffffff;
+      --bg-warm: #f7f7f7;
+      --surface: #ffffff;
+      --border: #ebebeb;
+      --border-hover: #dddddd;
+      --text: #222222;
+      --text-secondary: #717171;
+      --text-light: #b0b0b0;
+      --primary: #FF385C;
+      --primary-light: #fff0f3;
+      --primary-dark: #d93b5c;
+      --green: #008A05;
+      --green-bg: #f0faf0;
+      --green-border: #c6ecc6;
+      --orange: #c77800;
+      --orange-bg: #fff8ee;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 6px 20px rgba(0,0,0,0.1);
+      --shadow-xl: 0 12px 40px rgba(0,0,0,0.12);
+      --radius: 12px;
+      --radius-lg: 16px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-warm);
       color: var(--text);
       height: 100vh;
       overflow: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── Layout ──────────────────────────────────────── */
+    /* ─── Layout ────────────────────────────────────────── */
     .layout {
       display: flex;
       height: 100vh;
     }
 
-    /* ─── Left Panel ─────────────────────────────────── */
+    /* ─── Left Panel ────────────────────────────────────── */
     .left-panel {
-      width: 20%;
-      min-width: 280px;
+      width: 380px;
+      min-width: 340px;
       background: var(--surface);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+      overflow-x: hidden;
     }
 
+    .left-panel::-webkit-scrollbar { width: 0; }
+
     .logo-area {
-      padding: 24px 20px 16px;
+      padding: 28px 24px 24px;
       border-bottom: 1px solid var(--border);
     }
 
     .logo-area h1 {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(135deg, var(--accent), #a78bfa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-area h1 span.logo-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      font-size: 16px;
     }
 
     .logo-area .subtitle {
-      font-size: 11px;
-      color: var(--text-dim);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 400;
       margin-top: 4px;
+      margin-left: 42px;
     }
 
-    /* Task list */
+    /* ─── Task list ─────────────────────────────────────── */
     .task-list {
-      padding: 12px;
+      padding: 16px;
       flex: 1;
+    }
+
+    .task-list-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0 8px 12px;
     }
 
     .task-item {
       display: flex;
-      align-items: flex-start;
-      gap: 12px;
+      align-items: center;
+      gap: 14px;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: var(--radius);
       cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 4px;
-      position: relative;
+      transition: all 0.2s ease;
+      margin-bottom: 2px;
+      border: 2px solid transparent;
     }
 
     .task-item:hover {
-      background: var(--surface-2);
+      background: var(--bg-warm);
     }
 
     .task-item.active {
-      background: var(--surface-2);
-      border: 1px solid var(--accent);
-      box-shadow: 0 0 20px var(--accent-glow);
+      background: var(--primary-light);
+      border-color: var(--primary);
     }
 
     .task-item.completed-task {
-      opacity: 0.5;
+      opacity: 0.45;
     }
 
     .task-number {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 13px;
       font-weight: 700;
       flex-shrink: 0;
-      background: var(--surface-2);
-      color: var(--text-dim);
-      border: 1px solid var(--border);
+      background: var(--bg-warm);
+      color: var(--text-secondary);
+      transition: all 0.2s;
     }
 
     .task-item.active .task-number {
-      background: var(--accent);
+      background: var(--primary);
       color: white;
-      border-color: var(--accent);
     }
 
     .task-item.completed-task .task-number {
       background: var(--green);
-      color: var(--bg);
-      border-color: var(--green);
+      color: white;
     }
 
     .task-info h3 {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
-      line-height: 1.3;
+      color: var(--text);
     }
 
     .task-info .task-sub {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 2px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 1px;
+      font-weight: 400;
     }
 
-    /* Active task detail */
+    /* ─── Active task detail ───────────────────────────── */
     .active-task-detail {
-      padding: 20px;
+      padding: 24px;
       border-top: 1px solid var(--border);
-      background: var(--surface-2);
+      background: var(--surface);
     }
 
     .active-task-detail .task-icon {
-      font-size: 32px;
-      margin-bottom: 12px;
+      font-size: 36px;
+      margin-bottom: 16px;
+    }
+
+    .task-round-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
     }
 
     .active-task-detail h2 {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
+      letter-spacing: -0.3px;
       margin-bottom: 8px;
     }
 
     .active-task-detail .desc {
-      font-size: 13px;
-      color: var(--text-dim);
+      font-size: 15px;
+      color: var(--text-secondary);
       line-height: 1.6;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .active-task-detail .desc strong {
       color: var(--text);
+      font-weight: 600;
     }
 
     .active-task-detail .desc code {
-      background: var(--bg);
-      padding: 2px 6px;
-      border-radius: 4px;
+      background: var(--bg-warm);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+
+    .completion-stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: var(--bg-warm);
+      border-radius: var(--radius);
+    }
+
+    .completion-stat .stat-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .completion-stat .stat-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    .completion-stat .stat-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── CURL blocks ──────────────────────────────────── */
+    .curl-block {
+      background: #1a1a2e;
+      border-radius: var(--radius);
+      margin-top: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .curl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: #222240;
+    }
+
+    .curl-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #8888a8;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .curl-copy {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #aaa;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .curl-copy:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: white;
+    }
+
+    .curl-copy.copied {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .curl-code {
+      padding: 14px 16px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
-      color: var(--accent);
-    }
-
-    .hint-box {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--text-dim);
       line-height: 1.8;
+      color: #e4e4ef;
+      white-space: pre-wrap;
+      word-break: break-all;
     }
 
-    .hint-box code {
+    .curl-code .curl-flag { color: #ff9100; }
+    .curl-code .curl-str { color: #a78bfa; }
+
+    .curl-step-label {
+      font-size: 11px;
+      font-weight: 700;
       color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 14px;
+      margin-bottom: 4px;
     }
 
-    /* Admin controls */
-    .admin-controls {
-      padding: 12px;
+    /* ─── Admin controls ───────────────────────────────── */
+    .admin-section {
+      padding: 16px 24px 20px;
       border-top: 1px solid var(--border);
+    }
+
+    .admin-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .admin-rounds {
       display: flex;
       gap: 6px;
-      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
     .admin-btn {
       flex: 1;
-      min-width: 60px;
-      padding: 8px 6px;
+      padding: 10px 8px;
       border: 1px solid var(--border);
-      background: var(--surface-2);
-      color: var(--text-dim);
-      border-radius: 6px;
-      font-size: 11px;
+      background: var(--surface);
+      color: var(--text-secondary);
+      border-radius: 10px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
@@ -223,171 +372,190 @@
     }
 
     .admin-btn:hover {
-      border-color: var(--accent);
+      border-color: var(--text-secondary);
       color: var(--text);
+      box-shadow: var(--shadow-sm);
     }
 
     .admin-btn.active-round {
-      background: var(--accent);
+      background: var(--primary);
       color: white;
-      border-color: var(--accent);
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(255, 56, 92, 0.3);
     }
 
-    .admin-btn.danger {
-      border-color: var(--red);
-      color: var(--red);
-    }
-
-    .admin-btn.danger:hover {
-      background: var(--red);
-      color: white;
+    .admin-actions {
+      display: flex;
+      gap: 8px;
     }
 
     .admin-btn.add-player {
-      border-color: var(--green);
-      color: var(--green);
+      background: var(--text);
+      color: var(--surface);
+      border-color: var(--text);
     }
 
     .admin-btn.add-player:hover {
-      background: var(--green);
-      color: var(--bg);
+      opacity: 0.85;
     }
 
-    /* ─── Right Panel (Grid) ─────────────────────────── */
+    .admin-btn.danger {
+      color: var(--primary);
+      border-color: var(--border);
+    }
+
+    .admin-btn.danger:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .server-url {
+      padding: 12px 24px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .server-url code {
+      display: block;
+      background: var(--bg-warm);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+      word-break: break-all;
+    }
+
+    /* ─── Right Panel ──────────────────────────────────── */
     .right-panel {
       flex: 1;
-      padding: 16px;
+      padding: 28px 32px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
+      background: var(--bg-warm);
     }
+
+    .right-panel::-webkit-scrollbar { width: 6px; }
+    .right-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
     .grid-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      padding: 0 4px;
+      margin-bottom: 24px;
     }
 
     .grid-header h2 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-dim);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text);
     }
 
     .player-count {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      color: var(--text-dim);
-      background: var(--surface);
-      padding: 4px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
       flex: 1;
       align-content: start;
     }
 
-    /* ─── Player Cell ────────────────────────────────── */
+    /* ─── Player Cell ──────────────────────────────────── */
     .cell {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 16px;
+      border-radius: var(--radius-lg);
+      padding: 24px 20px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       text-align: center;
       position: relative;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      min-height: 140px;
-      overflow: hidden;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 155px;
+      box-shadow: var(--shadow-sm);
     }
 
-    .cell::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 12px;
-      opacity: 0;
-      transition: opacity 0.4s;
+    .cell:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }
 
     .cell.completed {
-      border-color: var(--green);
-      box-shadow: 0 0 30px var(--green-glow), inset 0 0 30px var(--green-glow);
-    }
-
-    .cell.completed::before {
-      background: linear-gradient(135deg, rgba(0, 230, 118, 0.08), rgba(0, 230, 118, 0.02));
-      opacity: 1;
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      box-shadow: 0 4px 16px rgba(0, 138, 5, 0.1);
     }
 
     .cell.in-progress {
-      border-color: var(--orange);
-      box-shadow: 0 0 20px var(--orange-glow);
+      background: var(--orange-bg);
+      border-color: #f0d9a8;
     }
 
     .cell-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      background: var(--surface-2);
-      color: var(--accent);
-      border: 1px solid var(--border);
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: var(--bg-warm);
+      color: var(--text);
       text-transform: uppercase;
+      transition: all 0.3s;
     }
 
     .cell.completed .cell-avatar {
       background: var(--green);
-      color: var(--bg);
-      border-color: var(--green);
+      color: white;
       animation: pop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    .cell.in-progress .cell-avatar {
+      background: var(--orange);
+      color: white;
+    }
+
     .cell-name {
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
+      color: var(--text);
     }
 
     .cell-status {
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-dim);
-      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-secondary);
     }
 
     .cell.completed .cell-status {
       color: var(--green);
+      font-weight: 600;
     }
 
     .cell-checkmark {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 22px;
-      height: 22px;
+      top: 12px;
+      right: 12px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: var(--green);
-      color: var(--bg);
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -405,15 +573,15 @@
 
     .cell-remove {
       position: absolute;
-      top: 6px;
-      left: 8px;
-      width: 18px;
-      height: 18px;
+      top: 8px;
+      left: 10px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       border: none;
       background: transparent;
-      color: var(--text-dim);
-      font-size: 12px;
+      color: var(--text-light);
+      font-size: 14px;
       cursor: pointer;
       opacity: 0;
       transition: all 0.15s;
@@ -422,23 +590,21 @@
       justify-content: center;
     }
 
-    .cell:hover .cell-remove {
-      opacity: 0.5;
-    }
+    .cell:hover .cell-remove { opacity: 0.6; }
 
     .cell-remove:hover {
       opacity: 1 !important;
-      background: var(--red);
-      color: white;
+      background: var(--primary-light);
+      color: var(--primary);
     }
 
-    /* Progress bar for task 4 */
+    /* Progress bar (task 4) */
     .progress-bar {
       width: 100%;
       height: 4px;
-      background: var(--surface-2);
+      background: var(--border);
       border-radius: 2px;
-      margin-top: 8px;
+      margin-top: 10px;
       overflow: hidden;
     }
 
@@ -449,48 +615,74 @@
       transition: width 0.3s;
     }
 
-    /* Empty state */
+    /* Task dots */
+    .task-progress {
+      display: flex;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .task-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.25s;
+    }
+
+    .task-dot.done {
+      background: var(--green);
+    }
+
+    .task-dot.current {
+      background: var(--primary);
+    }
+
+    /* ─── Empty state ──────────────────────────────────── */
     .empty-state {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100%;
-      color: var(--text-dim);
-      gap: 12px;
+      color: var(--text-secondary);
+      gap: 16px;
+      padding: 40px;
     }
 
     .empty-state .icon {
-      font-size: 48px;
-      opacity: 0.3;
+      font-size: 56px;
+      opacity: 0.25;
     }
 
     .empty-state p {
-      font-size: 14px;
+      font-size: 16px;
+      font-weight: 500;
     }
 
     .empty-state code {
       background: var(--surface);
-      padding: 8px 14px;
-      border-radius: 6px;
+      padding: 12px 18px;
+      border-radius: var(--radius);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
+      font-size: 13px;
       border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
     }
 
-    /* Modal */
+    /* ─── Modal ────────────────────────────────────────── */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 100;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s;
+      transition: opacity 0.25s;
     }
 
     .modal-overlay.show {
@@ -500,39 +692,41 @@
 
     .modal {
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 28px;
-      width: 360px;
-      transform: scale(0.95);
-      transition: transform 0.2s;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      width: 400px;
+      box-shadow: var(--shadow-xl);
+      transform: scale(0.95) translateY(10px);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .modal-overlay.show .modal {
-      transform: scale(1);
+      transform: scale(1) translateY(0);
     }
 
     .modal h3 {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .modal input {
       width: 100%;
-      padding: 10px 14px;
+      padding: 12px 16px;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg);
+      border-radius: var(--radius);
+      background: var(--surface);
       color: var(--text);
-      font-size: 14px;
+      font-size: 15px;
       font-family: 'Inter', sans-serif;
       outline: none;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
     }
 
     .modal input:focus {
-      border-color: var(--accent);
+      border-color: var(--text);
+      box-shadow: 0 0 0 1px var(--text);
     }
 
     .modal-actions {
@@ -542,10 +736,10 @@
     }
 
     .modal-btn {
-      padding: 8px 18px;
-      border-radius: 8px;
+      padding: 10px 22px;
+      border-radius: 10px;
       border: 1px solid var(--border);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
@@ -554,164 +748,49 @@
 
     .modal-btn.cancel {
       background: transparent;
-      color: var(--text-dim);
+      color: var(--text-secondary);
+    }
+
+    .modal-btn.cancel:hover {
+      background: var(--bg-warm);
     }
 
     .modal-btn.confirm {
-      background: var(--accent);
+      background: var(--primary);
       color: white;
-      border-color: var(--accent);
+      border-color: var(--primary);
+    }
+
+    .modal-btn.confirm:hover {
+      background: var(--primary-dark);
     }
 
     .modal-result {
-      margin-top: 12px;
-      padding: 10px;
-      background: var(--bg);
-      border-radius: 8px;
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      border-radius: var(--radius);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--green);
       display: none;
       word-break: break-all;
     }
 
-    /* Confetti */
+    /* ─── Animations ───────────────────────────────────── */
     @keyframes pop {
       0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
+      50% { transform: scale(1.15); }
       100% { transform: scale(1); }
     }
 
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(8px); }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .cell {
-      animation: slideIn 0.3s ease;
-    }
-
-    /* Server URL display */
-    .server-url {
-      padding: 12px;
-      border-top: 1px solid var(--border);
-    }
-
-    .server-url code {
-      display: block;
-      background: var(--bg);
-      padding: 8px 10px;
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--text-dim);
-      word-break: break-all;
-    }
-
-    /* Scoreboard */
-    .task-progress {
-      display: flex;
-      gap: 3px;
-      margin-top: 6px;
-    }
-
-    .task-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 2px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-    }
-
-    .task-dot.done {
-      background: var(--green);
-      border-color: var(--green);
-    }
-
-    .task-dot.current {
-      border-color: var(--accent);
-    }
-
-    /* CURL command blocks */
-    .curl-block {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-top: 10px;
-      overflow: hidden;
-    }
-
-    .curl-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 10px;
-      background: var(--surface-2);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .curl-label {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-dim);
-    }
-
-    .curl-copy {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.15s;
-    }
-
-    .curl-copy:hover {
-      border-color: var(--accent);
-      color: var(--text);
-    }
-
-    .curl-copy.copied {
-      border-color: var(--green);
-      color: var(--green);
-    }
-
-    .curl-code {
-      padding: 10px 12px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      line-height: 1.7;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-all;
-      overflow-x: auto;
-    }
-
-    .curl-code .curl-cmd { color: var(--green); }
-    .curl-code .curl-flag { color: var(--orange); }
-    .curl-code .curl-url { color: var(--accent); text-decoration: underline; }
-    .curl-code .curl-str { color: #a78bfa; }
-
-    .curl-note {
-      padding: 8px 12px;
-      font-size: 10px;
-      color: var(--text-dim);
-      border-top: 1px solid var(--border);
-      font-style: italic;
-    }
-
-    .curl-step-label {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--orange);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 2px;
-    }
+    .cell { animation: slideUp 0.35s ease; }
   </style>
 </head>
 <body>
@@ -719,7 +798,7 @@
     <!-- LEFT PANEL -->
     <div class="left-panel">
       <div class="logo-area">
-        <h1>N8N Arena</h1>
+        <h1><span class="logo-icon">⚡</span> N8N Arena</h1>
         <div class="subtitle">Interactive API Challenge</div>
       </div>
 
@@ -727,18 +806,20 @@
 
       <div class="active-task-detail" id="activeTaskDetail"></div>
 
-      <div class="admin-controls">
-        <button class="admin-btn" onclick="setTask(1)">R1</button>
-        <button class="admin-btn" onclick="setTask(2)">R2</button>
-        <button class="admin-btn" onclick="setTask(3)">R3</button>
-        <button class="admin-btn" onclick="setTask(4)">R4</button>
-        <button class="admin-btn" onclick="setTask(5)">R5</button>
-        <button class="admin-btn" onclick="setTask(6)">R6</button>
-      </div>
-
-      <div class="admin-controls">
-        <button class="admin-btn add-player" onclick="showAddPlayer()">+ Player</button>
-        <button class="admin-btn danger" onclick="resetAll()">Reset</button>
+      <div class="admin-section">
+        <div class="admin-label">Rounds</div>
+        <div class="admin-rounds">
+          <button class="admin-btn" onclick="setTask(1)">1</button>
+          <button class="admin-btn" onclick="setTask(2)">2</button>
+          <button class="admin-btn" onclick="setTask(3)">3</button>
+          <button class="admin-btn" onclick="setTask(4)">4</button>
+          <button class="admin-btn" onclick="setTask(5)">5</button>
+          <button class="admin-btn" onclick="setTask(6)">6</button>
+        </div>
+        <div class="admin-actions">
+          <button class="admin-btn add-player" onclick="showAddPlayer()" style="flex:2">+ Add Player</button>
+          <button class="admin-btn danger" onclick="resetAll()">Reset</button>
+        </div>
       </div>
 
       <div class="server-url">
@@ -759,8 +840,8 @@
   <!-- Add Player Modal -->
   <div class="modal-overlay" id="modal">
     <div class="modal">
-      <h3>Add Player</h3>
-      <input type="text" id="playerNameInput" placeholder="Player name..." autocomplete="off" />
+      <h3>Add a new player</h3>
+      <input type="text" id="playerNameInput" placeholder="Enter player name..." autocomplete="off" />
       <div class="modal-result" id="modalResult"></div>
       <div class="modal-actions">
         <button class="modal-btn cancel" onclick="hideModal()">Cancel</button>
@@ -776,14 +857,13 @@
 
     document.getElementById('serverUrl').textContent = BASE;
 
-    // ─── Real-time: SSE with polling fallback ────────
+    // ─── Real-time: SSE with polling fallback ──────────
     let useSSE = true;
     let pollTimer = null;
 
     function processState(newState) {
       state = newState;
       render();
-      // Check for new completions → confetti
       newState.participants.forEach((p) => {
         const prev = previousCompleted[p.id] || [];
         const newTasks = p.completedTasks.filter((t) => !prev.includes(t));
@@ -818,7 +898,6 @@
       pollTimer = setInterval(poll, 1000);
     }
 
-    // Try SSE first, fall back to polling
     connectSSE();
 
     // ─── Render ────────────────────────────────────────
@@ -831,7 +910,7 @@
 
     function renderTaskList() {
       const el = document.getElementById('taskList');
-      el.innerHTML = state.taskDescriptions
+      el.innerHTML = '<div class="task-list-label">Challenges</div>' + state.taskDescriptions
         .map((t) => {
           const isActive = t.id === state.currentTask;
           const allDone = state.participants.length > 0 && state.participants.every(
@@ -873,10 +952,7 @@
         case 3:
           return [{
             label: null,
-            cmd: `curl <span class="curl-flag">-u</span> <span class="curl-str">n8n:rocks</span> <span class="curl-flag">-X POST</span> \\
-  <span class="curl-flag">-H</span> <span class="curl-str">"Content-Type: application/json"</span> \\
-  <span class="curl-flag">-d</span> <span class="curl-str">'{"message": "Hello from N8N!"}'</span> \\
-  ${url}/api/player/${id}/task3`,
+            cmd: `curl <span class="curl-flag">-u</span> <span class="curl-str">n8n:rocks</span> <span class="curl-flag">-X POST</span> \\\n  <span class="curl-flag">-H</span> <span class="curl-str">"Content-Type: application/json"</span> \\\n  <span class="curl-flag">-d</span> <span class="curl-str">'{"message": "Hello from N8N!"}'</span> \\\n  ${url}/api/player/${id}/task3`,
             raw: `curl -u n8n:rocks -X POST -H "Content-Type: application/json" -d '{"message": "Hello from N8N!"}' ${url}/api/player/${id}/task3`
           }];
         case 4:
@@ -894,20 +970,14 @@
             },
             {
               label: 'Step 2 — Post it back',
-              cmd: `curl <span class="curl-flag">-X POST</span> \\
-  <span class="curl-flag">-H</span> <span class="curl-str">"Content-Type: application/json"</span> \\
-  <span class="curl-flag">-d</span> <span class="curl-str">'{"key": "PASTE_KEY_HERE"}'</span> \\
-  ${url}/api/player/${id}/task5`,
+              cmd: `curl <span class="curl-flag">-X POST</span> \\\n  <span class="curl-flag">-H</span> <span class="curl-str">"Content-Type: application/json"</span> \\\n  <span class="curl-flag">-d</span> <span class="curl-str">'{"key": "PASTE_KEY_HERE"}'</span> \\\n  ${url}/api/player/${id}/task5`,
               raw: `curl -X POST -H "Content-Type: application/json" -d '{"key": "PASTE_KEY_HERE"}' ${url}/api/player/${id}/task5`
             }
           ];
         case 6:
           return [{
             label: null,
-            cmd: `curl <span class="curl-flag">-X POST</span> \\
-  <span class="curl-flag">-H</span> <span class="curl-str">"Content-Type: application/json"</span> \\
-  <span class="curl-flag">-d</span> <span class="curl-str">'{"image": "data:image/png;base64,iVBOR..."}'</span> \\
-  ${url}/api/player/${id}/task6`,
+            cmd: `curl <span class="curl-flag">-X POST</span> \\\n  <span class="curl-flag">-H</span> <span class="curl-str">"Content-Type: application/json"</span> \\\n  <span class="curl-flag">-d</span> <span class="curl-str">'{"image": "data:image/png;base64,iVBOR..."}'</span> \\\n  ${url}/api/player/${id}/task6`,
             raw: `curl -X POST -H "Content-Type: application/json" -d '{"image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}' ${url}/api/player/${id}/task6`
           }];
         default:
@@ -935,9 +1005,10 @@
         p.completedTasks.includes(state.currentTask)
       ).length;
       const total = state.participants.length;
+      const pct = total ? Math.round((completed / total) * 100) : 0;
 
       const curls = getCurlCommands(task.id);
-      const curlHtml = curls.map((c, i) => `
+      const curlHtml = curls.map((c) => `
         ${c.label ? `<div class="curl-step-label">${c.label}</div>` : ''}
         <div class="curl-block">
           <div class="curl-header">
@@ -950,11 +1021,13 @@
 
       el.innerHTML = `
         <div class="task-icon">${task.icon}</div>
-        <h2>Round ${task.id}: ${task.title}</h2>
+        <div class="task-round-badge">Round ${task.id}</div>
+        <h2>${task.title}</h2>
         <div class="desc">${task.description}</div>
         ${curlHtml}
-        <div style="margin-top: 10px; font-size: 12px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">
-          ${completed}/${total} completed
+        <div class="completion-stat">
+          <div class="stat-bar"><div class="stat-fill" style="width: ${pct}%"></div></div>
+          <span class="stat-text">${completed}/${total}</span>
         </div>
       `;
     }
@@ -998,7 +1071,6 @@
               ? `<div class="progress-bar"><div class="progress-fill" style="width: ${(p.postCount / 4) * 100}%"></div></div>`
               : '';
 
-          // Task dots showing overall progress
           const dots = state.taskDescriptions
             .map(
               (t) =>
@@ -1008,7 +1080,7 @@
 
           return `
             <div class="cell ${cls}" id="cell-${p.id}">
-              <button class="cell-remove" onclick="removePlayer('${p.id}')" title="Remove player">×</button>
+              <button class="cell-remove" onclick="removePlayer('${p.id}')" title="Remove">×</button>
               <div class="cell-checkmark">✓</div>
               <div class="cell-avatar">${initials}</div>
               <div class="cell-name" title="${p.name}">${p.name}</div>
@@ -1022,10 +1094,9 @@
     }
 
     function renderRoundButtons() {
-      document.querySelectorAll('.admin-controls .admin-btn').forEach((btn) => {
-        const match = btn.textContent.match(/R(\d)/);
-        if (match) {
-          const round = parseInt(match[1]);
+      document.querySelectorAll('.admin-rounds .admin-btn').forEach((btn) => {
+        const round = parseInt(btn.textContent);
+        if (!isNaN(round)) {
           btn.classList.toggle('active-round', round === state.currentTask);
         }
       });
@@ -1095,15 +1166,15 @@
       const cell = document.getElementById(`cell-${id}`);
       if (!cell) return;
 
-      // Spawn mini confetti around the cell
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 16; i++) {
         const particle = document.createElement('div');
-        const colors = ['#00e676', '#6c5ce7', '#ff9100', '#ff5252', '#00b0ff', '#ffea00'];
+        const colors = ['#FF385C', '#008A05', '#c77800', '#6c5ce7', '#00b0ff', '#ffea00'];
+        const size = 4 + Math.random() * 5;
         particle.style.cssText = `
           position: fixed;
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
+          width: ${size}px;
+          height: ${size}px;
+          border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
           background: ${colors[Math.floor(Math.random() * colors.length)]};
           pointer-events: none;
           z-index: 999;
@@ -1117,17 +1188,17 @@
 
         document.body.appendChild(particle);
 
-        const angle = (Math.PI * 2 * i) / 12;
-        const distance = 40 + Math.random() * 60;
+        const angle = (Math.PI * 2 * i) / 16;
+        const distance = 50 + Math.random() * 70;
         const dx = Math.cos(angle) * distance;
-        const dy = Math.sin(angle) * distance;
+        const dy = Math.sin(angle) * distance - 20;
 
         particle.animate(
           [
             { transform: 'translate(0, 0) scale(1)', opacity: 1 },
             { transform: `translate(${dx}px, ${dy}px) scale(0)`, opacity: 0 },
           ],
-          { duration: 600, easing: 'ease-out' }
+          { duration: 700, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' }
         ).onfinish = () => particle.remove();
       }
     }
