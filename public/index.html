@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N8N Competition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface-2: #1a1a26;
+      --border: #2a2a3a;
+      --text: #e4e4ef;
+      --text-dim: #8888a0;
+      --accent: #6c5ce7;
+      --accent-glow: rgba(108, 92, 231, 0.3);
+      --green: #00e676;
+      --green-glow: rgba(0, 230, 118, 0.25);
+      --orange: #ff9100;
+      --orange-glow: rgba(255, 145, 0, 0.2);
+      --red: #ff5252;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─── Layout ──────────────────────────────────────── */
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* ─── Left Panel ─────────────────────────────────── */
+    .left-panel {
+      width: 20%;
+      min-width: 280px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .logo-area {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-area h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-area .subtitle {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 4px;
+    }
+
+    /* Task list */
+    .task-list {
+      padding: 12px;
+      flex: 1;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 4px;
+      position: relative;
+    }
+
+    .task-item:hover {
+      background: var(--surface-2);
+    }
+
+    .task-item.active {
+      background: var(--surface-2);
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .task-item.completed-task {
+      opacity: 0.5;
+    }
+
+    .task-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      background: var(--surface-2);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+    }
+
+    .task-item.active .task-number {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .task-item.completed-task .task-number {
+      background: var(--green);
+      color: var(--bg);
+      border-color: var(--green);
+    }
+
+    .task-info h3 {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .task-info .task-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* Active task detail */
+    .active-task-detail {
+      padding: 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .active-task-detail .task-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .active-task-detail h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .active-task-detail .desc {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .active-task-detail .desc strong {
+      color: var(--text);
+    }
+
+    .active-task-detail .desc code {
+      background: var(--bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    .hint-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+
+    .hint-box code {
+      color: var(--orange);
+    }
+
+    /* Admin controls */
+    .admin-controls {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .admin-btn {
+      flex: 1;
+      min-width: 60px;
+      padding: 8px 6px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-dim);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .admin-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .admin-btn.active-round {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .admin-btn.danger {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .admin-btn.danger:hover {
+      background: var(--red);
+      color: white;
+    }
+
+    .admin-btn.add-player {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .admin-btn.add-player:hover {
+      background: var(--green);
+      color: var(--bg);
+    }
+
+    /* ─── Right Panel (Grid) ─────────────────────────── */
+    .right-panel {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .grid-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
+
+    .grid-header h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    .player-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      background: var(--surface);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      flex: 1;
+      align-content: start;
+    }
+
+    /* ─── Player Cell ────────────────────────────────── */
+    .cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 140px;
+      overflow: hidden;
+    }
+
+    .cell::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .cell.completed {
+      border-color: var(--green);
+      box-shadow: 0 0 30px var(--green-glow), inset 0 0 30px var(--green-glow);
+    }
+
+    .cell.completed::before {
+      background: linear-gradient(135deg, rgba(0, 230, 118, 0.08), rgba(0, 230, 118, 0.02));
+      opacity: 1;
+    }
+
+    .cell.in-progress {
+      border-color: var(--orange);
+      box-shadow: 0 0 20px var(--orange-glow);
+    }
+
+    .cell-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: var(--surface-2);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      text-transform: uppercase;
+    }
+
+    .cell.completed .cell-avatar {
+      background: var(--green);
+      color: var(--bg);
+      border-color: var(--green);
+      animation: pop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .cell-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .cell-status {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .cell.completed .cell-status {
+      color: var(--green);
+    }
+
+    .cell-checkmark {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .cell.completed .cell-checkmark {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .cell-remove {
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 12px;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cell:hover .cell-remove {
+      opacity: 0.5;
+    }
+
+    .cell-remove:hover {
+      opacity: 1 !important;
+      background: var(--red);
+      color: white;
+    }
+
+    /* Progress bar for task 4 */
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--surface-2);
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--orange), var(--green));
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-dim);
+      gap: 12px;
+    }
+
+    .empty-state .icon {
+      font-size: 48px;
+      opacity: 0.3;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+    }
+
+    .empty-state code {
+      background: var(--surface);
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      border: 1px solid var(--border);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      width: 360px;
+      transform: scale(0.95);
+      transition: transform 0.2s;
+    }
+
+    .modal-overlay.show .modal {
+      transform: scale(1);
+    }
+
+    .modal h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .modal input:focus {
+      border-color: var(--accent);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .modal-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .modal-btn.cancel {
+      background: transparent;
+      color: var(--text-dim);
+    }
+
+    .modal-btn.confirm {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .modal-result {
+      margin-top: 12px;
+      padding: 10px;
+      background: var(--bg);
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--green);
+      display: none;
+      word-break: break-all;
+    }
+
+    /* Confetti */
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cell {
+      animation: slideIn 0.3s ease;
+    }
+
+    /* Server URL display */
+    .server-url {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .server-url code {
+      display: block;
+      background: var(--bg);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-dim);
+      word-break: break-all;
+    }
+
+    /* Scoreboard */
+    .task-progress {
+      display: flex;
+      gap: 3px;
+      margin-top: 6px;
+    }
+
+    .task-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+    }
+
+    .task-dot.done {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .task-dot.current {
+      border-color: var(--accent);
+    }
+
+    /* CURL command blocks */
+    .curl-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .curl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .curl-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+    }
+
+    .curl-copy {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+    }
+
+    .curl-copy:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .curl-copy.copied {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .curl-code {
+      padding: 10px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-all;
+      overflow-x: auto;
+    }
+
+    .curl-code .curl-cmd { color: var(--green); }
+    .curl-code .curl-flag { color: var(--orange); }
+    .curl-code .curl-url { color: var(--accent); text-decoration: underline; }
+    .curl-code .curl-str { color: #a78bfa; }
+
+    .curl-note {
+      padding: 8px 12px;
+      font-size: 10px;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border);
+      font-style: italic;
+    }
+
+    .curl-step-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <div class="logo-area">
+        <h1>N8N Arena</h1>
+        <div class="subtitle">Interactive API Challenge</div>
+      </div>
+
+      <div class="task-list" id="taskList"></div>
+
+      <div class="active-task-detail" id="activeTaskDetail"></div>
+
+      <div class="admin-controls">
+        <button class="admin-btn" onclick="setTask(1)">R1</button>
+        <button class="admin-btn" onclick="setTask(2)">R2</button>
+        <button class="admin-btn" onclick="setTask(3)">R3</button>
+        <button class="admin-btn" onclick="setTask(4)">R4</button>
+        <button class="admin-btn" onclick="setTask(5)">R5</button>
+        <button class="admin-btn" onclick="setTask(6)">R6</button>
+      </div>
+
+      <div class="admin-controls">
+        <button class="admin-btn add-player" onclick="showAddPlayer()">+ Player</button>
+        <button class="admin-btn danger" onclick="resetAll()">Reset</button>
+      </div>
+
+      <div class="server-url">
+        <code id="serverUrl"></code>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="grid-header">
+        <h2>Participants</h2>
+        <span class="player-count" id="playerCount">0 players</span>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+
+  <!-- Add Player Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h3>Add Player</h3>
+      <input type="text" id="playerNameInput" placeholder="Player name..." autocomplete="off" />
+      <div class="modal-result" id="modalResult"></div>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" onclick="hideModal()">Cancel</button>
+        <button class="modal-btn confirm" onclick="registerPlayer()">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BASE = window.location.origin;
+    let state = { currentTask: 1, participants: [], taskDescriptions: [] };
+    let previousCompleted = {};
+
+    document.getElementById('serverUrl').textContent = BASE;
+
+    // ─── Real-time: SSE with polling fallback ────────
+    let useSSE = true;
+    let pollTimer = null;
+
+    function processState(newState) {
+      state = newState;
+      render();
+      // Check for new completions → confetti
+      newState.participants.forEach((p) => {
+        const prev = previousCompleted[p.id] || [];
+        const newTasks = p.completedTasks.filter((t) => !prev.includes(t));
+        if (newTasks.includes(newState.currentTask)) {
+          celebratePlayer(p.id);
+        }
+        previousCompleted[p.id] = [...p.completedTasks];
+      });
+    }
+
+    function connectSSE() {
+      const es = new EventSource(`${BASE}/api/events`);
+      es.onmessage = (e) => processState(JSON.parse(e.data));
+      es.onerror = () => {
+        es.close();
+        useSSE = false;
+        startPolling();
+      };
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch(`${BASE}/api/state`);
+        const data = await res.json();
+        processState(data);
+      } catch (e) { /* retry next tick */ }
+    }
+
+    function startPolling() {
+      if (pollTimer) return;
+      poll();
+      pollTimer = setInterval(poll, 1000);
+    }
+
+    // Try SSE first, fall back to polling
+    connectSSE();
+
+    // ─── Render ────────────────────────────────────────
+    function render() {
+      renderTaskList();
+      renderActiveTask();
+      renderGrid();
+      renderRoundButtons();
+    }
+
+    function renderTaskList() {
+      const el = document.getElementById('taskList');
+      el.innerHTML = state.taskDescriptions
+        .map((t) => {
+          const isActive = t.id === state.currentTask;
+          const allDone = state.participants.length > 0 && state.participants.every(
+            (p) => p.completedTasks.includes(t.id)
+          );
+          let cls = 'task-item';
+          if (isActive) cls += ' active';
+          if (t.id < state.currentTask && allDone) cls += ' completed-task';
+
+          return `
+            <div class="${cls}" onclick="setTask(${t.id})">
+              <div class="task-number">${t.id}</div>
+              <div class="task-info">
+                <h3>${t.title}</h3>
+                <div class="task-sub">${t.subtitle}</div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function getCurlCommands(taskId) {
+      const url = BASE;
+      const id = '{your-id}';
+      switch (taskId) {
+        case 1:
+          return [{
+            label: null,
+            cmd: `curl ${url}/api/player/${id}/task1`,
+            raw: `curl ${url}/api/player/${id}/task1`
+          }];
+        case 2:
+          return [{
+            label: null,
+            cmd: `curl <span class="curl-flag">-u</span> <span class="curl-str">n8n:rocks</span> ${url}/api/player/${id}/task2`,
+            raw: `curl -u n8n:rocks ${url}/api/player/${id}/task2`
+          }];
+        case 3:
+          return [{
+            label: null,
+            cmd: `curl <span class="curl-flag">-u</span> <span class="curl-str">n8n:rocks</span> <span class="curl-flag">-X POST</span> \\
+  <span class="curl-flag">-H</span> <span class="curl-str">"Content-Type: application/json"</span> \\
+  <span class="curl-flag">-d</span> <span class="curl-str">'{"message": "Hello from N8N!"}'</span> \\
+  ${url}/api/player/${id}/task3`,
+            raw: `curl -u n8n:rocks -X POST -H "Content-Type: application/json" -d '{"message": "Hello from N8N!"}' ${url}/api/player/${id}/task3`
+          }];
+        case 4:
+          return [{
+            label: 'Run this 4 times!',
+            cmd: `curl <span class="curl-flag">-X POST</span> ${url}/api/player/${id}/task4`,
+            raw: `curl -X POST ${url}/api/player/${id}/task4`
+          }];
+        case 5:
+          return [
+            {
+              label: 'Step 1 — Get the key',
+              cmd: `curl ${url}/api/player/${id}/task5/key`,
+              raw: `curl ${url}/api/player/${id}/task5/key`
+            },
+            {
+              label: 'Step 2 — Post it back',
+              cmd: `curl <span class="curl-flag">-X POST</span> \\
+  <span class="curl-flag">-H</span> <span class="curl-str">"Content-Type: application/json"</span> \\
+  <span class="curl-flag">-d</span> <span class="curl-str">'{"key": "PASTE_KEY_HERE"}'</span> \\
+  ${url}/api/player/${id}/task5`,
+              raw: `curl -X POST -H "Content-Type: application/json" -d '{"key": "PASTE_KEY_HERE"}' ${url}/api/player/${id}/task5`
+            }
+          ];
+        case 6:
+          return [{
+            label: null,
+            cmd: `curl <span class="curl-flag">-X POST</span> \\
+  <span class="curl-flag">-H</span> <span class="curl-str">"Content-Type: application/json"</span> \\
+  <span class="curl-flag">-d</span> <span class="curl-str">'{"image": "data:image/png;base64,iVBOR..."}'</span> \\
+  ${url}/api/player/${id}/task6`,
+            raw: `curl -X POST -H "Content-Type: application/json" -d '{"image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="}' ${url}/api/player/${id}/task6`
+          }];
+        default:
+          return [];
+      }
+    }
+
+    function copyCurl(btn, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✓ Copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 1500);
+      });
+    }
+
+    function renderActiveTask() {
+      const el = document.getElementById('activeTaskDetail');
+      const task = state.taskDescriptions.find((t) => t.id === state.currentTask);
+      if (!task) return;
+
+      const completed = state.participants.filter((p) =>
+        p.completedTasks.includes(state.currentTask)
+      ).length;
+      const total = state.participants.length;
+
+      const curls = getCurlCommands(task.id);
+      const curlHtml = curls.map((c, i) => `
+        ${c.label ? `<div class="curl-step-label">${c.label}</div>` : ''}
+        <div class="curl-block">
+          <div class="curl-header">
+            <span class="curl-label">curl</span>
+            <button class="curl-copy" onclick="copyCurl(this, ${JSON.stringify(c.raw).replace(/"/g, '&quot;')})">Copy</button>
+          </div>
+          <div class="curl-code">${c.cmd}</div>
+        </div>
+      `).join('');
+
+      el.innerHTML = `
+        <div class="task-icon">${task.icon}</div>
+        <h2>Round ${task.id}: ${task.title}</h2>
+        <div class="desc">${task.description}</div>
+        ${curlHtml}
+        <div style="margin-top: 10px; font-size: 12px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">
+          ${completed}/${total} completed
+        </div>
+      `;
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById('grid');
+      const count = document.getElementById('playerCount');
+      count.textContent = `${state.participants.length} player${state.participants.length !== 1 ? 's' : ''}`;
+
+      if (state.participants.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="icon">👥</div>
+            <p>No players registered yet</p>
+            <code>POST ${BASE}/api/register { "name": "..." }</code>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = state.participants
+        .map((p) => {
+          const done = p.completedTasks.includes(state.currentTask);
+          const inProgress = state.currentTask === 4 && p.postCount > 0 && !done;
+          let cls = 'cell';
+          if (done) cls += ' completed';
+          else if (inProgress) cls += ' in-progress';
+
+          const initials = p.name
+            .split(' ')
+            .map((w) => w[0])
+            .join('')
+            .slice(0, 2);
+
+          let statusText = 'Waiting...';
+          if (done) statusText = '✓ Completed';
+          if (state.currentTask === 4 && !done) statusText = `${p.postCount}/4 requests`;
+
+          const progressBar =
+            state.currentTask === 4 && !done
+              ? `<div class="progress-bar"><div class="progress-fill" style="width: ${(p.postCount / 4) * 100}%"></div></div>`
+              : '';
+
+          // Task dots showing overall progress
+          const dots = state.taskDescriptions
+            .map(
+              (t) =>
+                `<div class="task-dot ${p.completedTasks.includes(t.id) ? 'done' : ''} ${t.id === state.currentTask ? 'current' : ''}"></div>`
+            )
+            .join('');
+
+          return `
+            <div class="cell ${cls}" id="cell-${p.id}">
+              <button class="cell-remove" onclick="removePlayer('${p.id}')" title="Remove player">×</button>
+              <div class="cell-checkmark">✓</div>
+              <div class="cell-avatar">${initials}</div>
+              <div class="cell-name" title="${p.name}">${p.name}</div>
+              <div class="cell-status">${statusText}</div>
+              ${progressBar}
+              <div class="task-progress">${dots}</div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderRoundButtons() {
+      document.querySelectorAll('.admin-controls .admin-btn').forEach((btn) => {
+        const match = btn.textContent.match(/R(\d)/);
+        if (match) {
+          const round = parseInt(match[1]);
+          btn.classList.toggle('active-round', round === state.currentTask);
+        }
+      });
+    }
+
+    // ─── Admin Actions ─────────────────────────────────
+    async function setTask(task) {
+      await fetch(`${BASE}/api/admin/task`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task }),
+      });
+    }
+
+    async function resetAll() {
+      if (!confirm('Reset all progress?')) return;
+      await fetch(`${BASE}/api/admin/reset`, { method: 'POST' });
+    }
+
+    async function removePlayer(id) {
+      if (!confirm('Remove this player?')) return;
+      await fetch(`${BASE}/api/admin/player/${id}`, { method: 'DELETE' });
+    }
+
+    // ─── Modal ─────────────────────────────────────────
+    function showAddPlayer() {
+      document.getElementById('modal').classList.add('show');
+      document.getElementById('playerNameInput').value = '';
+      document.getElementById('modalResult').style.display = 'none';
+      setTimeout(() => document.getElementById('playerNameInput').focus(), 100);
+    }
+
+    function hideModal() {
+      document.getElementById('modal').classList.remove('show');
+    }
+
+    async function registerPlayer() {
+      const name = document.getElementById('playerNameInput').value.trim();
+      if (!name) return;
+
+      const res = await fetch(`${BASE}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      });
+      const data = await res.json();
+
+      const result = document.getElementById('modalResult');
+      result.style.display = 'block';
+      result.textContent = `✓ Registered! ID: ${data.id}`;
+
+      document.getElementById('playerNameInput').value = '';
+      document.getElementById('playerNameInput').focus();
+    }
+
+    document.getElementById('playerNameInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') registerPlayer();
+      if (e.key === 'Escape') hideModal();
+    });
+
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) hideModal();
+    });
+
+    // ─── Celebration ───────────────────────────────────
+    function celebratePlayer(id) {
+      const cell = document.getElementById(`cell-${id}`);
+      if (!cell) return;
+
+      // Spawn mini confetti around the cell
+      for (let i = 0; i < 12; i++) {
+        const particle = document.createElement('div');
+        const colors = ['#00e676', '#6c5ce7', '#ff9100', '#ff5252', '#00b0ff', '#ffea00'];
+        particle.style.cssText = `
+          position: fixed;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: ${colors[Math.floor(Math.random() * colors.length)]};
+          pointer-events: none;
+          z-index: 999;
+        `;
+
+        const rect = cell.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        particle.style.left = cx + 'px';
+        particle.style.top = cy + 'px';
+
+        document.body.appendChild(particle);
+
+        const angle = (Math.PI * 2 * i) / 12;
+        const distance = 40 + Math.random() * 60;
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+
+        particle.animate(
+          [
+            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+            { transform: `translate(${dx}px, ${dy}px) scale(0)`, opacity: 0 },
+          ],
+          { duration: 600, easing: 'ease-out' }
+        ).onfinish = () => particle.remove();
+      }
+    }
+  </script>
+</body>
+</html>
