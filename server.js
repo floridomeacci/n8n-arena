@@ -128,17 +128,21 @@ function getPlayer(req, res) {
 
 // ─── Admin: Register player ────────────────────────────────────────────────
 app.post('/api/register', (req, res) => {
-  const { name } = req.body;
-  if (!name) return res.status(400).json({ error: 'Name is required' });
-  const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 20) + '-' + crypto.randomBytes(2).toString('hex');
+  // Generate unique random 4-digit number
+  let code;
+  const existingCodes = Object.values(participants).map(p => p.name);
+  do {
+    code = String(Math.floor(1000 + Math.random() * 9000));
+  } while (existingCodes.includes(code));
+  const id = 'p-' + code + '-' + crypto.randomBytes(2).toString('hex');
   participants[id] = {
-    name,
+    name: code,
     completedTasks: new Set(),
     secretKey: null,
     postCount: 0,
   };
   broadcast();
-  res.json({ id, name, message: `Welcome ${name}! Your player ID is: ${id}` });
+  res.json({ id, name: code, message: `Your player code is: ${code} — Player ID: ${id}` });
 });
 
 // ─── Admin: Set current task ────────────────────────────────────────────────
